@@ -198,6 +198,7 @@ def add(x0, x1):
     return Add()(x0, x1)
 
 def mul(x0, x1):
+    x1 = as_array(x1)
     return Mul()(x0, x1)
 
 def neg(x):
@@ -226,7 +227,7 @@ def setup_variable():
     Variable.__add__ = add
     Variable.__radd__ = add
     Variable.__mul__ = mul
-    Variable.__rmul = mul
+    Variable.__rmul__ = mul
     Variable.__neg__ = neg
     Variable.__sub__ = sub
     Variable.__rsub__ = rsub
