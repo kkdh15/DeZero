@@ -2,6 +2,7 @@ import numpy as np
 from dezero.core import Function
 from dezero.core import as_variable
 from dezero import utils
+from dezero.core import exp
 
 class Sin(Function):
     def forward(self, x):
@@ -146,7 +147,7 @@ class MeanSquaredError(Function):
         return y
     
     def backward(self, gy):
-        x0, x1 = self.iputs
+        x0, x1 = self.inputs
         diff = x0 - x1
         gx0 = gy * diff * (2. / len(diff))
         gx1 = -gx0
@@ -154,3 +155,17 @@ class MeanSquaredError(Function):
 
 def mean_squared_error(x0, x1):
     return MeanSquaredError()(x0, x1)
+
+def linear_simple(x, W, b=None):
+    t = matmul(x, W)
+    if b is None:
+        return t
+    
+    y = t + b
+    t.data = None
+    return y
+
+def sigmoid_simple(x):
+    x = as_variable(x)
+    y = 1 / (1 + exp(-x))
+    return y

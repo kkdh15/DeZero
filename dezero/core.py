@@ -209,6 +209,16 @@ class Pow(Function):
         gx = c * x ** (c-1) * gy
         return gx
 
+class Exp(Function):
+    def forward(self, x):
+        y = np.exp(x)
+        self.y = y
+        return y
+
+    def backward(self, gy):
+        return gy * self.y
+
+
 import contextlib
 @contextlib.contextmanager
 def using_config(name, value):
@@ -262,6 +272,9 @@ def rdiv(x0, x1):
 def pow(x, c):
     return Pow(c)(x)
 
+def exp(x):
+    return Exp()(x)
+
 def setup_variable():
     Variable.__add__ = add
     Variable.__radd__ = add
@@ -273,3 +286,4 @@ def setup_variable():
     Variable.__truediv__ = div
     Variable.__rtruediv__ = rdiv
     Variable.__pow__ = pow
+    Variable.exp = exp
