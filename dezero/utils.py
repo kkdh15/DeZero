@@ -1,5 +1,7 @@
 import os
 import subprocess
+from dezero import Variable
+from dezero import functions as F
 
 def _dot_var(v, verbose=False):
     dot_var = '{} [label="{}", color=orange, style=filled]\n'
@@ -62,3 +64,17 @@ def plot_dot_graph(output, verbose=True, to_file='graph.png'):
     extension = os.path.splitext(to_file)[1][1:]
     cmd = 'dot {} -T {} -o {}'.format(graph_path, extension, to_file)
     subprocess.run(cmd, shell=True)
+    
+def reshape_sum_backward(gy, x_shape, axis, keepdims):
+    ndim = len(x_shape)
+    if not (ndim == 0 or keepdims):
+        if axis is None:
+            shape = [1] * ndim
+        else:
+            tupled_axis = axis if isinstance(axis, tuple) else (axis,)
+            actual_axis = [a if a >= 0 else a + ndim for a in tupled_axis]
+            shape = list(gy.shape)
+            for a in sorted(actual_axis):
+                shape.insert(a, 1)
+        gy = gy.reshape(shape)
+    return gy
