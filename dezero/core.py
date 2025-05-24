@@ -2,7 +2,6 @@ import numpy as np
 import weakref
 import dezero
 
-
 class Config:
     enable_backprop = True
     
@@ -188,12 +187,12 @@ class Div(Function):
         return y
     
     def backward(self, gy):
-        gx0, gx1 = gy, gy
+        x0, x1 = self.inputs
+        gx0 = gy / x1
+        gx1 = gy * (-x0 / x1 ** 2)
         if self.x0_shape != self.x1_shape:
             gx0 = dezero.functions.sum_to(gx0, self.x0_shape)
             gx1 = dezero.functions.sum_to(gx1, self.x1_shape) 
-        gx0 = gy / gx1
-        gx1 = gy * (-gx0 / gx1 ** 2)
         return gx0, gx1
 
 class Pow(Function):
