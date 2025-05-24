@@ -78,3 +78,10 @@ def reshape_sum_backward(gy, x_shape, axis, keepdims):
                 shape.insert(a, 1)
         gy = gy.reshape(shape)
     return gy
+
+def sum_to(x, shape):
+    ndim = len(shape)
+    lead = x.ndim - ndim
+    lead_axis = tuple(range(lead))
+    axis = [i + lead for i, sx in enumerate(shape) if sx == 1]
+    return x.sum(lead_axis + tuple(axis), keepdims=True).reshape(shape)
