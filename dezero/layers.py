@@ -8,10 +8,19 @@ class Layer:
         self._params = set()
     
     def __setattr__(self, name, value):
-        if isinstance(value, Parameter):
+        if isinstance(value, (Parameter, Layer)):
             self._params.add(name)
         super().__setattr__(name, value)
     
+    def params(self):
+        for name in self._params:
+            obj = self.__dict__[name]
+            
+            if isinstance(obj, Layer):
+                yield from obj.params()
+            else:
+                yield obj
+
     def __call__(self, *inputs):
         outputs = self.forward(*inputs)
         if not isinstance(outputs, tuple):
@@ -22,10 +31,6 @@ class Layer:
     
     def forward(self, inputs):
         raise NotImplementedError()
-    
-    def params(self):
-        for name in self._params:
-            yield self.__dict__[name]
         
     def cleargrads(self):
         for param in self.params():
